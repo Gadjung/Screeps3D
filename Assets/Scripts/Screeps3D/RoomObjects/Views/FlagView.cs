@@ -1,10 +1,11 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.Screeps3D;
+using UnityEngine;
 
 namespace Screeps3D.RoomObjects.Views
 {
     public class FlagView : MonoBehaviour, IObjectViewComponent
     {
-        [SerializeField] private MeshRenderer rend;
+        [SerializeField] private MeshRenderer rend = default;
         private Flag _flag;
 
         public void Init()
@@ -32,8 +33,15 @@ namespace Screeps3D.RoomObjects.Views
 
             var primary = Constants.FlagColors[_flag.PrimaryColor];
             var secondary = Constants.FlagColors[_flag.SecondaryColor];
-            rend.materials[0].color = Color.Lerp(rend.materials[0].color, primary, Time.deltaTime);
-            rend.materials[1].color = Color.Lerp(rend.materials[1].color, secondary, Time.deltaTime);
+
+            var currentPrimaryColor = rend.material.GetColor(ShaderKeys.FlagShader.PrimaryColor);
+            var currentSecondaryColor = rend.material.GetColor(ShaderKeys.FlagShader.SecondaryColor);
+
+            // TODO: compare if we need to update the color
+            // https://docs.unity3d.com/ScriptReference/Mathf.Approximately.html
+
+            rend.material.SetColor(ShaderKeys.FlagShader.PrimaryColor, Color.Lerp(currentPrimaryColor, primary, Time.deltaTime));
+            rend.material.SetColor(ShaderKeys.FlagShader.SecondaryColor, Color.Lerp(currentSecondaryColor, secondary, Time.deltaTime));
         }
     }
 }

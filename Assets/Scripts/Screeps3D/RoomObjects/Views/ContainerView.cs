@@ -5,7 +5,7 @@ namespace Screeps3D.RoomObjects.Views
 {
     public class ContainerView : MonoBehaviour, IObjectViewComponent
     {
-        [SerializeField] private ScaleAxes _energyDisplay;
+        [SerializeField] private ScaleAxes _energyDisplay = default;
         private Container _container;
 
         public void Init()
@@ -29,7 +29,10 @@ namespace Screeps3D.RoomObjects.Views
 
         private void AdjustScale()
         {
-            _energyDisplay.SetVisibility(_container.TotalResources / _container.TotalCapacity);
+            if (_container != null)
+            {
+                _energyDisplay.SetVisibility(_container.TotalResources / _container.TotalCapacity);
+            }
         }
     }
 }

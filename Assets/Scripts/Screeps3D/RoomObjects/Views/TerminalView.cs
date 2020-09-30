@@ -5,7 +5,7 @@ namespace Screeps3D.RoomObjects.Views
 {
     public class TerminalView : MonoBehaviour, IObjectViewComponent
     {
-        [SerializeField] private ScaleAxes _energyDisplay;
+        [SerializeField] private ScaleAxes _energyDisplay = default;
         private Terminal _terminal;
 
         public void Init()
@@ -29,7 +29,10 @@ namespace Screeps3D.RoomObjects.Views
 
         private void AdjustScale()
         {
-            _energyDisplay.SetVisibility(_terminal.TotalResources / _terminal.TotalCapacity);
+            if (_terminal != null)
+            {
+                _energyDisplay.SetVisibility(_terminal.TotalResources / _terminal.TotalCapacity);
+            }
         }
     }
 }

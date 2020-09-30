@@ -26,8 +26,6 @@ namespace Screeps3D.Rooms.Views
     {
         public Room Room { get; private set; }
 
-        [SerializeField] private TerrainView _terrainView;
-
         private MapDotView[,] _dots = new MapDotView[50, 50];
         private List<MapDotView> _dotList = new List<MapDotView>();
 
@@ -60,6 +58,7 @@ namespace Screeps3D.Rooms.Views
         private void OnMapData(JSONObject data)
         {
             ClearDots();
+            // ClearObjects();
 
             if (Room.ShowingObjects)
                 return;
@@ -73,12 +72,6 @@ namespace Screeps3D.Rooms.Views
                 }
                 else if (key.Equals("k"))
                 {
-                    foreach (var numArray in data[key].list)
-                    {
-                        var x = (int)numArray.list[0].n;
-                        var y = (int)numArray.list[1].n;
-                        _terrainView.addLair(x, y);
-                    }
                     SpawnRoomObjects<SourceKeeperLairView>(data[key].list, SourceKeeperLairView.Path);
                 }
                 else if (key.Equals("c"))
@@ -134,15 +127,23 @@ namespace Screeps3D.Rooms.Views
 
         private void SpawnDots(string key, List<JSONObject> list)
         {
-            Color randomEnemyColor;
-            if (!GameManager.Instance.PlayerColors.TryGetValue(key, out randomEnemyColor))
+            Color enemyPlayerColor;
+            if (!GameManager.Instance.PlayerColors.TryGetValue(key, out enemyPlayerColor))
             {
-                randomEnemyColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
-                GameManager.Instance.PlayerColors.Add(key, randomEnemyColor);
+                var user = ScreepsAPI.UserManager.GetUser(key);
+                if (user != null)
+                {
+                    enemyPlayerColor = user.BadgeColor1;
+                }
+                else
+                {
+                    enemyPlayerColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+                }
+                GameManager.Instance.PlayerColors.Add(key, enemyPlayerColor);
             }
 
 
-            var color = key == ScreepsAPI.Me.UserId ? Color.green : randomEnemyColor;
+            var color = key == ScreepsAPI.Me.UserId ? Color.green : enemyPlayerColor;
             foreach (var numArray in list)
             {
                 var x = (int)numArray.list[0].n;
@@ -167,6 +168,13 @@ namespace Screeps3D.Rooms.Views
             foreach (var dot in _dotList)
                 dot.Hide();
             _dotList.Clear();
+        }
+
+        private void ClearObjects() {
+            foreach(var obj in _objectList) {
+                obj.Hide();
+            }
+            _objectList.Clear();
         }
 
         public void RemoveAt(int x, int y)

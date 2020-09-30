@@ -69,13 +69,14 @@ namespace Screeps3D.RoomObjects
 
     // TODO: we need to map powers per class, I mean, what is power 1,8, 16?
 
-    internal class PowerCreep : StoreObject, INamedObject, IHitpointsObject, IOwnedObject, IActionObject, IBump
+    internal class PowerCreep : StoreObject, INamedObject, IHitpointsObject, IOwnedObject, ICreepAction, IBump
     {
         public string UserId { get; set; }
         public ScreepsUser Owner { get; set; }
         //public CreepBody Body { get; private set; }
         public string Name { get; set; }
         public Dictionary<string, JSONObject> Actions { get; set; }
+        public Vector3? ActionTarget { get; set; }
         public float Hits { get; set; }
         public float HitsMax { get; set; }
         public float Fatigue { get; set; }
@@ -84,15 +85,11 @@ namespace Screeps3D.RoomObjects
         public Vector3 PrevPosition { get; protected set; }
         public Vector3 BumpPosition { get; private set; }
         public Quaternion Rotation { get; private set; }
-        public Dictionary<string, float> Store { get; private set; }
-        public float TotalCapacity { get; set; }
-        public float TotalResources { get; set; }
 
         internal PowerCreep()
         {
             //Body = new CreepBody();
             Actions = new Dictionary<string, JSONObject>();
-            Store = new Dictionary<string, float>();
         }
 
         internal override void Unpack(JSONObject data, bool initial)

@@ -8,8 +8,8 @@ namespace Screeps3D.Tools.Selection.Subpanels
 {
     public class HitpointsPanel : LinePanel
     {
-        [SerializeField] private TextMeshProUGUI _label;
-        [SerializeField] private ScaleAxes _meter;
+        [SerializeField] private TextMeshProUGUI _label = default;
+        [SerializeField] private ScaleAxes _meter = default;
         private IHitpointsObject _hitsObject;
         private RoomObject _roomObject;
 
@@ -31,10 +31,19 @@ namespace Screeps3D.Tools.Selection.Subpanels
             UpdateLabel();
         }
 
+        public override bool IsPanelAvailabelForObject(RoomObject roomObject)
+        {
+            return base.IsPanelAvailabelForObject(roomObject) && !roomObject.Type.Equals(Constants.TypeController);
+        }
+
         private void UpdateLabel()
         {
             _meter.SetVisibility(_hitsObject.Hits / _hitsObject.HitsMax);
-            _label.text = string.Format("{0:n0} / {1:n0}", _hitsObject.Hits, (long) _hitsObject.HitsMax);
+            if((long) _hitsObject.HitsMax > 0) {
+                _label.text = string.Format("{0:n0} / {1:n0}", _hitsObject.Hits, (long) _hitsObject.HitsMax);
+            } else {
+                _label.text = string.Format("Indestructible");
+            }
         }
 
         private void OnDelta(JSONObject obj)

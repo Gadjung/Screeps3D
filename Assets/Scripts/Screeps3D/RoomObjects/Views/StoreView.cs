@@ -5,7 +5,7 @@ namespace Screeps3D.RoomObjects.Views
 {
     public class StoreView : MonoBehaviour, IObjectViewComponent
     {
-        [SerializeField] private ScaleVisibility _storeDisplay;
+        [SerializeField] private ScaleVisibility _storeDisplay = default;
 
         private IStoreObject _storeObject;
 
@@ -30,7 +30,10 @@ namespace Screeps3D.RoomObjects.Views
 
         private void AdjustScale()
         {
-            _storeDisplay.SetVisibility(_storeObject.TotalResources / _storeObject.TotalCapacity);
+            if (_storeObject != null)
+            {
+                _storeDisplay.SetVisibility(_storeObject.TotalResources / _storeObject.TotalCapacity);
+            }
         }
     }
 }

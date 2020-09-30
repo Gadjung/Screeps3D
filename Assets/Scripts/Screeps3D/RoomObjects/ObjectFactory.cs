@@ -55,7 +55,7 @@ namespace Screeps3D.RoomObjects
                 case Constants.TypePortal:
                     return new Portal();
                 case Constants.TypeRoad:
-                    return new RoomObject(); // Roads are implemented in a different way
+                    return new Road();
                 case Constants.TypeObserver:
                     return new Observer();
                 case Constants.TypeExtractor:
@@ -68,6 +68,8 @@ namespace Screeps3D.RoomObjects
                     return new Ruin();
                 case Constants.TypeInvaderCore:
                     return new InvaderCore();
+                case Constants.TypeNuke:
+                    return new Nuke();
                 default:
                     return new PlaceHolderRoomObject();
             }

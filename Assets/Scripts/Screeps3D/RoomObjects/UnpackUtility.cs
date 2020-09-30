@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using Assets.Scripts.Screeps3D.RoomObjects;
 using Screeps_API;
 using UnityEngine;
 
@@ -99,6 +101,17 @@ namespace Screeps3D.RoomObjects
             if (coolDownData != null)
             {
                 obj.Cooldown = coolDownData.n;
+                return;
+            }
+        }
+
+        internal static void Cooldown(ICooldownTime obj, JSONObject data)
+        {
+            var coolDownData = data["cooldownTime"];
+            if (coolDownData != null)
+            {
+                obj.CooldownTime = (long)coolDownData.n;
+                return;
             }
         }
 
@@ -122,12 +135,55 @@ namespace Screeps3D.RoomObjects
             }
         }
 
+        internal static void Effects(IEffectObject obj, JSONObject data)
+        {
+            // Invader Core effects example:
+            // "effects":[
+            //     {"effect":1001,"power":1001,"endTime":2,641389E+07,"duration":5000},
+            //     {"effect":1002,"power":1002,"endTime":2,649596E+07,"duration":82074}
+            // ],
+
+            var effectsData = data["effects"];
+
+            if (effectsData != null)
+            {
+                obj.Effects.Clear();
+                foreach (var effect in effectsData.list)
+                {
+                    var effectType = (int)effect["effect"].n;
+                    var powerType = (int)effect["power"].n;
+                    var endTime = (int)effect["endTime"].n;
+                    var duration = (int)effect["duration"].n;
+
+                    obj.Effects.Add(new EffectDto(effectType, powerType, endTime, duration));
+                }
+
+                ////var sb = new StringBuilder();
+                ////sb.AppendLine($"{obj.Effects.Count} effects parsed");
+                ////foreach (var effect in obj.Effects)
+                ////{
+                ////    sb.AppendLine($"    Effect: {effect.Effect}");
+                ////    sb.AppendLine($"    Power: {effect.Power}");
+                ////    sb.AppendLine($"    EndTime: {effect.EndTime}");
+                ////    sb.AppendLine($"    Duration: {effect.Duration}");
+                ////}
+
+                ////Debug.Log(sb.ToString());
+            }
+        }
+
         internal static void Progress(IProgress progressObj, JSONObject data)
         {
             var progressData = data["progress"];
             if (progressData != null)
             {
                 progressObj.Progress = progressData.n;
+            }
+
+            var progressTotalData = data["progressTotal"];
+            if (progressTotalData != null)
+            {
+                progressObj.ProgressMax = progressTotalData.n;
             }
         }
 
@@ -164,7 +220,12 @@ namespace Screeps3D.RoomObjects
                 // ----- POST STORE UPDATE 
 
                 var store = data.HasField("store") ? data["store"] : data; // this supports both PRE and POST store update
-                if (store != null && !store.IsNull)
+
+                if (store == null)
+                {
+                    obj.Store.Clear();
+                }
+                else if (!store.IsNull)
                 {
                     foreach (var resourceType in store.keys)
                     {
@@ -182,11 +243,6 @@ namespace Screeps3D.RoomObjects
                 }
 
                 obj.TotalResources = obj.Store.Sum(a => a.Value);
-
-                if (data.HasField("storeCapacity")) // Labs seems to have this and not storeCapacityResource when they do not contain a mineral type?, atleast according to this https://github.com/screeps/storage/blob/b045531aca745f0942293bd32e0bdb5813bc12e2/lib/db.js#L123-L131
-                {
-                    obj.TotalCapacity = data["storeCapacity"].n;
-                }
 
                 if (data.HasField("storeCapacityResource"))
                 {
@@ -210,7 +266,18 @@ namespace Screeps3D.RoomObjects
                             {
                                 obj.Capacity.Add(resourceType, storeCapacityResource[resourceType].n);
                             }
-                        } 
+                        }
+                    }
+                }
+
+                if (data.HasField("storeCapacity")) // Labs seems to have this and not storeCapacityResource when they do not contain a mineral type?, atleast according to this https://github.com/screeps/storage/blob/b045531aca745f0942293bd32e0bdb5813bc12e2/lib/db.js#L123-L131
+                {
+                    var storeCapacity = data["storeCapacity"].n;
+
+                    if (storeCapacity > 0)
+                    {
+
+                        obj.TotalCapacity = storeCapacity;
                     }
                 }
             }
@@ -226,11 +293,17 @@ namespace Screeps3D.RoomObjects
             var actionLog = data["actionLog"];
             if (actionLog != null)
             {
-                actionObject.Actions.Clear();
                 foreach (var key in actionLog.keys)
                 {
                     var actionData = actionLog[key];
-                    actionObject.Actions[key] = actionData;
+                    if (actionData.IsNull)
+                    {
+                        actionObject.Actions.Remove(key);
+                    }
+                    else
+                    {
+                        actionObject.Actions[key] = actionData;
+                    }
                 }
             }
         }

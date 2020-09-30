@@ -54,6 +54,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -65,6 +66,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -86,10 +88,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4939495687273752}
-  - component: {fileID: 135201818668498066}
-  - component: {fileID: 114201680228044910}
   - component: {fileID: 114612420582581000}
   - component: {fileID: 1453467313594893630}
+  - component: {fileID: 3020949016984270398}
+  - component: {fileID: 4470708617799309100}
   m_Layer: 0
   m_Name: mineral
   m_TagString: Untagged
@@ -112,34 +114,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &135201818668498066
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1470691814702614}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.4939855
-  m_Center: {x: -0.019968495, y: 0.69, z: 0.0062445104}
---- !u!114 &114201680228044910
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1470691814702614}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8c0dbd230caa4450b371bfe864d7906a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _animateOnStart: 1
-  _visibleOnStart: 1
-  _speed: 0.2
 --- !u!114 &114612420582581000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -167,6 +141,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c281b437df4abc647a932832f3097098, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mineral: {fileID: 23407070794174552}
-  _collider: {fileID: 135201818668498066}
-  _vis: {fileID: 114201680228044910}
+  _mineralMesh: {fileID: 23407070794174552}
+  _collider: {fileID: 4470708617799309100}
+  _vis: {fileID: 114612420582581000}
+--- !u!114 &3020949016984270398
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1470691814702614}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89c143c9faac4c8193ea547a8365995a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!136 &4470708617799309100
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1470691814702614}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 2.5693188
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.7846594, z: 0}

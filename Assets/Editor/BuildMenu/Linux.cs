@@ -15,6 +15,7 @@ public class Linux
         string[] levels = new string[] {
             "Assets/Scenes/Login.unity",
             "Assets/Scenes/Game.unity",
+            "Assets/Scenes/Options.unity",
         };
 
         // Build player.
@@ -31,5 +32,26 @@ public class Linux
         //Process proc = new Process();
         //proc.StartInfo.FileName = path + "/Screeps3D.exe";
         //proc.Start();
+    }
+
+    public static void Release(string path, string version, string output)
+    {
+        // tar it
+        Process proc = new Process();
+        proc.StartInfo.FileName = @"C:\Program Files\7-Zip\7zG.exe";
+        proc.StartInfo.Arguments = $"a -ttar {output}/archive.tar {path}/*";
+        //UnityEngine.Debug.Log(proc.StartInfo.Arguments);
+        proc.Start();
+        proc.WaitForExit(30000);
+
+        // ball it
+        Process ballProc = new Process();
+        ballProc.StartInfo.FileName = @"C:\Program Files\7-Zip\7zG.exe";
+        ballProc.StartInfo.Arguments = $"a {output}/Screeps3D_{version}_Linux_64.tgz {output}/archive.tar";
+        //UnityEngine.Debug.Log(proc.StartInfo.Arguments);
+        ballProc.Start();
+        ballProc.WaitForExit(30000);
+
+        FileUtil.DeleteFileOrDirectory($"{output}/archive.tar");
     }
 }

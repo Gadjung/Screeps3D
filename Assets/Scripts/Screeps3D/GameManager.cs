@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Common;
 using Screeps_API;
@@ -12,8 +13,8 @@ namespace Screeps3D
         public static GameMode CurrentMode { get; private set; }
         public static event Action<GameMode> OnModeChange;
 
-        [SerializeField] private GameMode _defaultMode;
-        [SerializeField] private FadePanel _exitCue;
+        [SerializeField] private GameMode _defaultMode = default;
+        [SerializeField] private FadePanel _exitCue = default;
 
         public Dictionary<string, Color> PlayerColors { get; private set; }
 
@@ -24,6 +25,9 @@ namespace Screeps3D
 
         public override void Awake()
         {
+            Application.SetStackTraceLogType(LogType.Log, StackTraceLogType.None);
+            Application.SetStackTraceLogType(LogType.Warning, StackTraceLogType.None);
+
             if (_defaultMode != GameMode.Login && !ScreepsAPI.IsConnected)
                 SceneManager.LoadScene(0);
             else
@@ -35,8 +39,10 @@ namespace Screeps3D
         private void Start()
         {
             if (ScreepsAPI.Console == null)
+            {
                 SceneManager.LoadScene(0);
-            
+            }
+
             ScreepsAPI.OnConnectionStatusChange += OnConnectionStatusChange;
             _exitCue.OnFinishedAnimation += OnExitCue;
 
@@ -47,6 +53,15 @@ namespace Screeps3D
         {
             PoolLoader.Init();
             PrefabLoader.Init();
+
+            StartCoroutine(LoadOptions());
+        }
+
+        private IEnumerator LoadOptions()
+        {
+            yield return new WaitForSeconds(1);
+
+            SceneManager.LoadSceneAsync("Scenes/Options", LoadSceneMode.Additive);
         }
 
         private void OnDestroy()
@@ -60,9 +75,14 @@ namespace Screeps3D
                 return;
             
             if (CurrentMode == GameMode.Login)
+            {
                 SceneManager.LoadScene(0);
+            }
+
             if (CurrentMode == GameMode.Room)
+            {
                 SceneManager.LoadScene(1);
+            }
         }
 
         private void Update()

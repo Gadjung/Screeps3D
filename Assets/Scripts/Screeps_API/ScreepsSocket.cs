@@ -30,7 +30,7 @@ namespace Screeps_API
             }
 
             var protocol = ScreepsAPI.Cache.Address.Ssl ? "wss" : "ws";
-            var port = ScreepsAPI.Cache.Official ? "" : string.Format(":{0}", ScreepsAPI.Cache.Address.Ssl ? "443" : ScreepsAPI.Cache.Address.Port);
+            var port = ScreepsAPI.Cache.Type == SourceProviderType.Official ? "" : string.Format(":{0}", ScreepsAPI.Cache.Address.Ssl ? "443" : ScreepsAPI.Cache.Address.Port);
 
             var path = ScreepsAPI.Cache.Address.Path;
             if (path.StartsWith("/") && path.EndsWith("/"))
@@ -135,20 +135,33 @@ namespace Screeps_API
             {
                 return;
             }
-
+            if(list[0].str.IndexOf("room:")==0)
+            {
+                findAndUpdateTimeInRoomSubscription(list[1]);
+            }
             _subscriptions[list[0].str].Invoke(list[1]);
+        }
+
+        private void findAndUpdateTimeInRoomSubscription(JSONObject json)
+        {
+            if(!json.HasField("gameTime") || json["gameTime"] == null)
+            {
+                return;
+            }
+            long currentTime = (long)json["gameTime"].n;
+            ScreepsAPI.Instance.UpdateTime(currentTime);
         }
 
         public void Subscribe(string path, Action<JSONObject> callback)
         {
-            Debug.Log("subscribing " + path);
+            //Debug.Log("subscribing " + path);
             Socket.Send(string.Format("subscribe {0}", path));
             _subscriptions[path] = callback;
         }
 
         public void Unsub(string path, bool remove = true)
         {
-            Debug.Log("unsub " + path);
+            //Debug.Log("unsub " + path);
             Socket.Send(string.Format("unsubscribe {0}", path));
             if (remove)
                 _subscriptions.Remove(path);

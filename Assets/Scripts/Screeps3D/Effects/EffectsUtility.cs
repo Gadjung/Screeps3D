@@ -6,17 +6,54 @@ namespace Screeps3D.Effects
 {
     public static class EffectsUtility
     {
+        public static void ArcBeam(Transform sTransform, Vector3 targetPos, BeamConfig config)
+        {
+            var startPos = sTransform.position;
+            ArcBeam(startPos, targetPos, config.Color);
+        }
         public static void Beam(RoomObject origin, JSONObject target, BeamConfig config)
         {
             var startPos = origin.View.transform.position + new Vector3(0, config.StartHeight, 0);
             var endPos = PosUtility.Convert(target, origin.Room) + new Vector3(0, config.EndHeight, 0);
             Beam(startPos, endPos, config.Color);
+        }        
+        public static void Attack(Vector3 targetPos) {
+            var go = PoolLoader.Load(AttackEffect.PATH);
+            var effect = go.GetComponent<AttackEffect>();
+            effect.Load(targetPos);
         }
-        
+        public static void RangedAttackHit(Vector3 targetPos) {
+            var go = PoolLoader.Load(RangedAttackHitEffect.PATH);
+            var effect = go.GetComponent<RangedAttackHitEffect>();
+            effect.Load(targetPos);
+        }
+        public static void Heal(RoomObject origin) {
+            var go = PoolLoader.Load(HealEffect.PATH);
+            var effect = go.GetComponent<HealEffect>();
+            effect.Load(origin);
+        }
+        public static void Harvest(Vector3 targetPos) {
+            var go = PoolLoader.Load(HarvestEffect.PATH);
+            var effect = go.GetComponent<HarvestEffect>();
+            effect.Load(targetPos);
+        }
+
+        public static void Reserve(Vector3 targetPos) {
+            var go = PoolLoader.Load(ReserveEffect.PATH);
+            var effect = go.GetComponent<ReserveEffect>();
+            effect.Load(targetPos);
+        }
+
         public static void Beam(Vector3 startPos, Vector3 endPos, Color color)
         {
             var go = PoolLoader.Load(BeamEffect.PATH);
             var effect = go.GetComponent<BeamEffect>();
+            effect.Load(startPos, endPos, color);
+        }
+        public static void ArcBeam(Vector3 startPos, Vector3 endPos, Color color)
+        {
+            var go = PoolLoader.Load(ArcBeamEffect.PATH);
+            var effect = go.GetComponent<ArcBeamEffect>();
             effect.Load(startPos, endPos, color);
         }
 
@@ -58,6 +95,17 @@ namespace Screeps3D.Effects
             var go = PoolLoader.Load(ElectricExplosionEffect.PATH);
             var effect = go.GetComponent<ElectricExplosionEffect>();
             effect.Load(origin); // TODO: need to unload if creep exists / portals
+        }
+
+        /// <summary>
+        /// Render a nuke explosion at target
+        /// </summary>
+        /// <param name="position"></param>
+        public static void NukeExplosion(Vector3 position)
+        {
+            var go = PoolLoader.Load(NukeExplosionEffect.PATH);
+            var effect = go.GetComponent<NukeExplosionEffect>();
+            effect.Load(position);
         }
     }
     

@@ -3,6 +3,7 @@ using Screeps3D.Rooms;
 using Screeps_API;
 using UnityEngine;
 using System;
+using Assets.Scripts.Screeps3D.RoomObjects;
 
 namespace Screeps3D.RoomObjects
 {
@@ -48,6 +49,11 @@ namespace Screeps3D.RoomObjects
         string ResourceType { get; set; }
     }
 
+    internal interface IDepositObject
+    {
+        string DepositType { get; set; }
+    }
+
     internal interface IRegenerationObject : IRoomObject
     {
         float NextRegenerationTime { get; set; }
@@ -72,6 +78,27 @@ namespace Screeps3D.RoomObjects
     internal interface ICooldownObject
     {
         float Cooldown { get; set; }
+    }
+
+    internal interface ICooldownTime : IRoomObject
+    {
+        long CooldownTime { get; set; }
+    }
+
+    internal interface IEffect {
+        string effect {get; set;}
+        string power {get; set;}
+        long endTime {get; set;}
+        long duration {get; set;}
+    }
+    internal interface IEffectObject {
+        List<EffectDto> Effects { get; set; }
+    }
+
+    internal interface IDepositCooldown : IRoomObject
+    {
+        int Harvested { get; set; }
+        float CooldownTime { get; set; }
     }
 
     internal interface IHitpointsObject
@@ -99,9 +126,20 @@ namespace Screeps3D.RoomObjects
         float ProgressMax { get; set; }
     }
 
-    internal interface IActionObject
+    internal interface IReserved: IRoomObject
+    {
+        float ReservationEnd { get; set; }
+        ScreepsUser ReservedBy { get; set; }
+    }
+
+    internal interface IActionObject : IRoomObject
     {
         Dictionary<string, JSONObject> Actions { get; }
+    }
+
+    internal interface ICreepAction : IActionObject
+    {
+        Vector3? ActionTarget { get; set; }
     }
 
     internal interface IBump
@@ -137,5 +175,10 @@ namespace Screeps3D.RoomObjects
     public interface IRoomObjectPanelButton<T> : IRoomObjectPanelButton where T: IRoomObject
     {
         void OnClick(T roomObject);
+    }
+
+    public interface ICreepBody
+    {
+        CreepBody Body { get; }
     }
 }

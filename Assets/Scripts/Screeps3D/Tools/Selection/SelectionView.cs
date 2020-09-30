@@ -1,18 +1,24 @@
 ﻿using System.Collections.Generic;
+using Assets.Scripts.Screeps3D;
 using Screeps3D.RoomObjects;
 using Screeps3D.RoomObjects.Views;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Rendering.HighDefinition;
 
 namespace Screeps3D.Tools.Selection
 {
     [DisallowMultipleComponent]
     internal class SelectionView : MonoBehaviour
     {
-        private static readonly Dictionary<string, float> CircleSizes = new Dictionary<string, float>
+        private static readonly Dictionary<string, Vector3> CircleSizes = new Dictionary<string, Vector3>
         {
-            // Prefab default 0.75
-            {"extension", 0.5f}
+            // Prefab default 1.5
+            {"extension", Vector3.one},
+            {"source", new Vector3(2.15f,2.15f,10)},
+            {"constructedWall", new Vector3(2.15f,2.15f,10)},
+            {"storage", new Vector3(2.15f,2.15f,10)},
+            {"powerSpawn", new Vector3(2.15f,2.15f,10)}
         };
 
         private string _type;
@@ -20,7 +26,7 @@ namespace Screeps3D.Tools.Selection
         private GameObject _label;
         private Stack<GameObject> _labelPool = new Stack<GameObject>();
         private Stack<GameObject> _circlePool = new Stack<GameObject>();
-        private Projector _projector;
+        private DecalProjector _decalProjector;
 
         public ObjectView Selected { get; private set; }
 
@@ -84,13 +90,13 @@ namespace Screeps3D.Tools.Selection
 
         private void FadeInCircle()
         {
-            var color = _projector.material.color;
+            var color = _decalProjector.material.GetColor(ShaderKeys.HDRPDecal.Color);
             if (color.a >= 1)
             {
                 return;
             }
             color.a += Time.deltaTime / .2f;
-            _projector.material.color = color;
+            _decalProjector.material.SetColor(ShaderKeys.HDRPDecal.Color, color);
         }
 
         private GameObject CreateCircle()
@@ -105,13 +111,16 @@ namespace Screeps3D.Tools.Selection
             {
                 go = Instantiate(Tools.Selection.Selection.CircleTemplate);
             }
-            _projector = go.GetComponent<Projector>();
-            var color = _projector.material.color;
+            _decalProjector = go.GetComponent<DecalProjector>();
+            var color = _decalProjector.material.GetColor(ShaderKeys.HDRPDecal.Color);
             color.a = 0;
-            _projector.material.color = color;
+            _decalProjector.material.SetColor(ShaderKeys.HDRPDecal.Color, color);
             go.transform.SetParent(Selected.gameObject.transform, false);
             if (CircleSizes.ContainsKey(_type))
-                _projector.orthographicSize = CircleSizes[_type];
+            {
+                var size = CircleSizes[_type];
+                _decalProjector.size = new Vector3(size.x, size.y, size.z);
+            }
             return go;
         }
     }

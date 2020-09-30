@@ -5,6 +5,9 @@ namespace Screeps3D
 {
     public static class Constants
     {
+        public const string InvaderUserId = "2";
+        public const string SourceKeeperUserId = "3";
+
         public const string TypeStorage = "storage";
         public const string TypeExtension = "extension";
         public const string TypeSpawn = "spawn";
@@ -34,8 +37,9 @@ namespace Screeps3D
         public const string TypeFactory = "factory";
         public const string TypeDeposit = "deposit";
         public const string TypeRuin = "ruin";
-        public const string TypeInvaderCore = "invadercore";
-        
+        public const string TypeInvaderCore = "invaderCore";
+        public const string TypeNuke = "nuke";
+
 
 
 
@@ -64,7 +68,7 @@ namespace Screeps3D
             {"repair", false},
             {"upgradeController", false}
         };
-        
+
         // TODO: this kinda belongsin Screeps_API theese flag colors are API specific.
         public enum FlagColor
         {
@@ -94,31 +98,73 @@ namespace Screeps3D
             {(int)FlagColor.White, new Color(1f, 1f, 1f)},
         };
 
-        public static readonly Dictionary<string, float> ConstructionCost = new Dictionary<string, float>
+        public static class CreepBodyPartColors
         {
-            {"spawn", 15000},
-            {"extension", 3000},
-            {"road", 300},
-            {"constructedWall", 1},
-            {"rampart", 1},
-            {"link", 5000},
-            {"storage", 30000},
-            {"tower", 5000},
-            {"observer", 8000},
-            {"powerSpawn", 100000},
-            {"extractor", 5000},
-            {"lab", 50000},
-            {"terminal", 100000},
-            {"container", 5000},
-            {"nuker", 100000},
-        };
-        
+            public static readonly Color Move;
+            public static readonly Color Work;
+            public static readonly Color Attack;
+            public static readonly Color RangedAttack;
+            public static readonly Color Heal;
+            public static readonly Color Tough;
+            public static readonly Color Claim;
+            public static readonly Color Carry;
+
+            static CreepBodyPartColors()
+            {
+                ColorUtility.TryParseHtmlString("#A9B7C6", out Move);
+                ColorUtility.TryParseHtmlString("#FFE56D", out Work);
+                ColorUtility.TryParseHtmlString("#F93842", out Attack);
+                ColorUtility.TryParseHtmlString("#5D80B2", out RangedAttack);
+                ColorUtility.TryParseHtmlString("#65FD62", out Heal);
+                ColorUtility.TryParseHtmlString("#FFFFFF", out Tough);
+                ColorUtility.TryParseHtmlString("#B99CFB", out Claim);
+                ColorUtility.TryParseHtmlString("#777777", out Carry);
+            }
+        }
+
+        public static class CreepBodyPartBoostColors
+        {
+            public static readonly Color BOOST_TYPE_UH_UO;
+            public static readonly Color BOOST_TYPE_KH_KO;
+            public static readonly Color BOOST_TYPE_LH_LO;
+            public static readonly Color BOOST_TYPE_ZH_ZO;
+            public static readonly Color BOOST_TYPE_GH_GO;
+
+            static CreepBodyPartBoostColors()
+            {
+                ColorUtility.TryParseHtmlString("#50D7F9", out BOOST_TYPE_UH_UO);
+                ColorUtility.TryParseHtmlString("#A071FF", out BOOST_TYPE_KH_KO);
+                ColorUtility.TryParseHtmlString("#00F4A2", out BOOST_TYPE_LH_LO);
+                ColorUtility.TryParseHtmlString("#FDD388", out BOOST_TYPE_ZH_ZO);
+                ColorUtility.TryParseHtmlString("#FFFFFF", out BOOST_TYPE_GH_GO);
+            }
+        }
+
         public static readonly Dictionary<float, float> MineralDensity = new Dictionary<float, float>
         {
             {1, 15000},
             {2, 35000},
             {3, 70000},
             {4, 100000}
+        };
+
+        public static readonly Dictionary<string, Color> ResourceColors = new Dictionary<string, Color> {
+            {"other", new Color32(204, 204, 204, 255)},
+            {"energy", new Color32(118, 93, 0, 255)},
+            {"power", new Color32(255, 0, 0, 255)},
+            // MINERALS
+            {Constants.BaseMineral.Hydrogen, new   Color32(205,205,205,255)},
+            {Constants.BaseMineral.Oxygen, new   Color32(205,205,205,255)},
+            {Constants.BaseMineral.Utrium, new   Color32(80,215,249,255)},
+            {Constants.BaseMineral.Keanium, new   Color32(160,113,255,255)},
+            {Constants.BaseMineral.Lemergium, new   Color32(0,244,162,255)},
+            {Constants.BaseMineral.Zynthium, new   Color32(253,211,136,255)},
+            {Constants.BaseMineral.Catalyst, new   Color32(255,119,119,255)},
+            // DEPOSITS
+            {Constants.BaseDeposit.Biomass, new   Color32(38,110,0,255)},
+            {Constants.BaseDeposit.Metal, new   Color32(128,58,0,255)},
+            {Constants.BaseDeposit.Mist, new   Color32(97,0,128,255)},
+            {Constants.BaseDeposit.Silicon, new   Color32(0,102,128,255)}
         };
 
         public static class BaseMineral
@@ -131,14 +177,23 @@ namespace Screeps3D
             public const string Zynthium = "Z";
             public const string Catalyst = "X";
         }
+
+        public static class BaseDeposit
+        {
+            public const string Silicon = "silicon";
+            public const string Metal = "metal";
+            public const string Biomass = "biomass";
+            public const string Mist = "mist";
+        }
+
         // TODO: factory update? https://github.com/screeps/storage/blob/b045531aca745f0942293bd32e0bdb5813bc12e2/lib/db.js#L55
         // https://github.com/screeps/common/blob/c5b52a2550444e6e30599c51eff3a601c983267e/lib/constants.js#L384-L387
         // might need to verify that all resources are in fact present.
         //   const depositTypes = [C.RESOURCE_SILICON, C.RESOURCE_METAL, C.RESOURCE_BIOMASS, C.RESOURCE_MIST];
         public static readonly HashSet<string> ResourcesAll = new HashSet<string>()
         {
-            "energy", 
-            "power", 
+            "energy",
+            "power",
             "ops",
             "H",
             "O",
@@ -190,7 +245,7 @@ namespace Screeps3D
             "XZHO2",
             "XGH2O",
             "XGHO2",
-            
+
             "utrium_bar",
             "lemergium_bar",
             "zynthium_bar",
@@ -233,6 +288,14 @@ namespace Screeps3D
             "emanation",
             "essence",
 
-        }; 
+        };
+
+        public static int NUKE_ROOM_RANGE = 10;
+        public static int NUKE_TRAVEL_TICKS = 50000;
+        public static int CONTROLLER_RESERVE_MAX = 5000;
+
+        public static float DEPOSIT_EXHAUST_MULTIPLY = 0.001f;
+        public static float DEPOSIT_EXHAUST_POW = 1.2f;
+        public static int DEPOSIT_DECAY_TIME = 50000;
     }
 }

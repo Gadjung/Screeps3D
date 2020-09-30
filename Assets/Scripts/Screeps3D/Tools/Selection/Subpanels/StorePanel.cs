@@ -9,7 +9,7 @@ namespace Screeps3D.Tools.Selection.Subpanels
 {
     public class StorePanel : SelectionSubpanel
     {
-        [SerializeField] private TextMeshProUGUI _label;
+        [SerializeField] private TextMeshProUGUI _label = default;
 
         private IStoreObject _selected;
         private RoomObject _roomObject;
@@ -31,7 +31,7 @@ namespace Screeps3D.Tools.Selection.Subpanels
             _selected = roomObject as IStoreObject;
             UpdateLabel();
         }
-        
+
         private void UpdateLabel()
         {
             var resources = _selected.Store
@@ -47,7 +47,7 @@ namespace Screeps3D.Tools.Selection.Subpanels
             {
                 Show();
             }
-            
+
             var sb = new StringBuilder();
             foreach (var resource in resources)
                 sb.AppendLine(string.Format("{0}: {1:n0}", char.ToUpper(resource.Key[0]) + resource.Key.Substring(1), resource.Value));
@@ -60,12 +60,15 @@ namespace Screeps3D.Tools.Selection.Subpanels
 
         private void OnDelta(JSONObject obj)
         {
-            var hasChanged = obj.keys.Any(k => Constants.ResourcesAll.Contains(k));
-            
+            var store = obj.HasField("store") ? obj["store"] : obj; // this supports both PRE and POST store update
+            var hasChanged = store == null || store.keys.Any(k => Constants.ResourcesAll.Contains(k));
+
             if (hasChanged)
+            {
                 UpdateLabel();
+            }
         }
-    
+
         private static short GetResourceOrder(string resourceType)
         {
             switch (resourceType[0])
@@ -75,7 +78,7 @@ namespace Screeps3D.Tools.Selection.Subpanels
                 case 'p':
                     return 1;
                 default:
-                    return (short) resourceType.Length;
+                    return (short)resourceType.Length;
             }
         }
 

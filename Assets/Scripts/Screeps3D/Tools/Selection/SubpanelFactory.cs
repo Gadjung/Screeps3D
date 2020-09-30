@@ -9,16 +9,17 @@ namespace Screeps3D.Tools.Selection
 {
     public class SubpanelFactory : BaseSingleton<SubpanelFactory>
     {
-        [SerializeField] private Transform _inactiveParent;
+        [SerializeField] private Transform _inactiveParent = default;
 
         private readonly List<Func<RoomObject, SelectionSubpanel>> _factories = new List<Func<RoomObject, SelectionSubpanel>>();
         private const string Path = "Prefabs/Selection/Subpanels/";
 
         private readonly string[] _prefabNames =
         {
-            "Type", "Owner", "Name", "Pos", "Hits", "Energy", "Age", "Fatigue", "Decay", "Level", "Progress", "Construction", 
-            "Capacity", "Store", "Cooldown", "Resource", "Spawning", "SpawningIn", "Regeneration",
+            "Type", "Owner", "Name", "Pos", "Hits", "Energy", "Age", "Fatigue", "Decay", "Level", "Reserved", "Progress", "Construction", 
+            "Capacity", "Store", "Cooldown", "CooldownTime", "DepositCooldown", "Resource", "Spawning", "SpawningIn", "Regeneration",
             "Power", "Destination",
+            "CreepBody",
             "Buttons"
         };
         
@@ -38,7 +39,7 @@ namespace Screeps3D.Tools.Selection
                 
                 _factories.Add(roomObject =>
                 {
-                    if (!component.ObjectType.IsInstanceOfType(roomObject))
+                    if (!component.IsPanelAvailabelForObject(roomObject))
                     {
                         ////if (component.ObjectType.IsGenericType)
                         ////{

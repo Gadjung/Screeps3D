@@ -7,10 +7,10 @@ namespace Screeps3D.Rooms.Views
 {
     public class RoomZoneView : MonoBehaviour, IRoomViewComponent
     {
-        [SerializeField] private ParticleSystem _north;
-        [SerializeField] private ParticleSystem _south;
-        [SerializeField] private ParticleSystem _west;
-        [SerializeField] private ParticleSystem _east;
+        [SerializeField] private ParticleSystem _north = default;
+        [SerializeField] private ParticleSystem _south = default;
+        [SerializeField] private ParticleSystem _west = default;
+        [SerializeField] private ParticleSystem _east = default;
 
         private Room room;
         private RoomInfo _roomInfo;
@@ -23,7 +23,7 @@ namespace Screeps3D.Rooms.Views
             this.room = room;
             showSafeMode = false;
 
-            _roomInfo = MapStatsUpdater.Instance.GetRoomInfo(room.RoomName);
+            _roomInfo = MapStatsUpdater.Instance.GetRoomInfo(room.ShardName, room.RoomName);
         }
 
 
@@ -34,7 +34,7 @@ namespace Screeps3D.Rooms.Views
 
                 if (room != null)
                 {
-                    _roomInfo = MapStatsUpdater.Instance.GetRoomInfo(room.RoomName);
+                    _roomInfo = MapStatsUpdater.Instance.GetRoomInfo(room.ShardName, room.RoomName);
                 }
 
                 return;
