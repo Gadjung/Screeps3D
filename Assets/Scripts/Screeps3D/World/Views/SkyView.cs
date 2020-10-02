@@ -48,6 +48,16 @@ namespace Screeps3D.World.Views
         [Setting("Gameplay/Fog", "Max Fog Distance", "")]
         static float _fogMaxDistance = 0f;
 
+        [Setting("Gameplay/Lighting", "Sun Rotation Speed", "")]
+        static float _rotSpeed = 0.01f;
+
+        [Setting("Gameplay/Lighting", "Sun Max Brightness", "")]
+        static float _maxSunIntensity = 0.1f;
+
+        [Setting("Gameplay/Lighting", "Ambient Brightness", "")]
+        static float _ambientBrightness = 0.01f;
+
+
         private Fog _fog;
 
         void Start()
@@ -86,10 +96,9 @@ namespace Screeps3D.World.Views
         }
 
         private void rotateGlobalLight() {
-            // tie this value to tick rate somehow
-            float rotSpeed = 0.01f;        
+            // tie this value to tick rate somehow   
 
-            float intensity = Mathf.Min(0.01f, Mathf.Pow(Mathf.Abs(180 - _globalLight.transform.rotation.eulerAngles.y) * 0.003f, 2)); 
+            float intensity = Mathf.Min(_maxSunIntensity, Mathf.Pow(Mathf.Abs(180 - _globalLight.transform.rotation.eulerAngles.y) * 0.003f, 2)); 
             // from above formula we get states y-rotation:
             // 0 = midday, 180 = midnight, 360 = midday
             // for that we have custom gradient passed as argument with color-ramp aligned to above order
@@ -97,94 +106,17 @@ namespace Screeps3D.World.Views
             float state = _globalLight.transform.rotation.eulerAngles.y / 360f;
             _globalLight.color = _gradient.Evaluate(state);
 
-            _globalLight.transform.Rotate(0f, rotSpeed, 0f, Space.World);
+            _globalLight.transform.Rotate(0f, _rotSpeed, 0f, Space.World);
             _globalLight.intensity = intensity;
         }
-        private void expositionSkySet() {
-            if(_night) {
-                _nightLength -= _expositionChange;
-                if(_nightLength > 0) {
-                    return;
-                }
-                _sunRise = true;
-                _night = false;
-            }
-            
-            if(_sunRise) {
-                _skySettings.exposure.value += _expositionChange;
-                if(_skySettings.exposure.value <= _dayExposition) {
-                    return;
-                }
-                _sunRise = false;
-                _sunSet = true;
-            }
-
-            if(_sunSet) {
-                _skySettings.exposure.value -= _expositionChange;
-                if(_skySettings.exposure.value >= _nightExposition) {
-                    return;
-                }
-                _sunSet = false;
-                _night = true;
-                _nightLength = 2f;
-            }
-        }
-
-        private void changeLux(float val) {
-            if(_skySettings.desiredLuxValue.value < 0.03) {
-                val = 0.1f * val;
-            }
-            if(_skySettings.desiredLuxValue.value < 0.001) {
-                val = 0.1f * val;
-            }
-            _skySettings.desiredLuxValue.value = Mathf.Max(_nightLux, _skySettings.desiredLuxValue.value + val);
-        }
-        private void luxSkySet() {
-            if(_night) {
-                _currentNightProgress += _nightProgress;
-                if(_currentNightProgress < _nightLength) {
-                    return;
-                }
-                _sunRise = true;
-                _night = false;
-                _currentNightProgress = 0;
-            }
-            
-            if(_sunRise) {
-                if(_skySettings.desiredLuxValue.value <= _dayLux) {
-                    changeLux(_luxChange);
-                    return;
-                }
-                _sunRise = false;
-                _day = true;
-            }
-            
-            if(_day) {
-                _currentDayProgress += _nightProgress;
-                if(_currentDayProgress < _dayLength) {
-                    return;
-                }
-                _day = false;
-                _sunSet = true;
-                _currentDayProgress = 0;
-            }
-
-            if(_sunSet) {
-                if(_skySettings.desiredLuxValue.value > _nightLux) {
-                    changeLux(_luxChange * -1f);
-                    return;
-                }
-                _sunSet = false;
-                _night = true;
-            }
-        }
-
         void Update()
         {
             rotateGlobalLight();
+            
             if ((long)Time.time % 2 != 0) {
                 return;
             }
+            _skySettings.desiredLuxValue.value = _ambientBrightness;
             rotateSky();
             UpdateFogSettings();
         }
