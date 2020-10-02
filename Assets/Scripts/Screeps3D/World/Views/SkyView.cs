@@ -9,6 +9,7 @@ namespace Screeps3D.World.Views
     {
         [SerializeField] public Volume _volume;
         [SerializeField] public Light _globalLight;
+        [SerializeField] public Gradient _gradient;
         SkySettings _skySettings;
         bool _sunRise;
         bool _sunSet;
@@ -85,28 +86,18 @@ namespace Screeps3D.World.Views
         }
 
         private void rotateGlobalLight() {
-            // _globalLight.transform.Rotate(0f, 0.3f, 0f, Space.World);
-            float rotSpeed = 0.05f;
-            // float riseOrFall = _globalLight.transform.rotation.eulerAngles.y < 180 ? 0.1f : -0.1f;
-            bool morning = _globalLight.transform.rotation.eulerAngles.y > 220f;
-            bool afterNoon = _globalLight.transform.rotation.eulerAngles.y < 140f;
-            float step = (360f - 220f) / rotSpeed;
-            if(morning) {
-                // from blue (168,204,255) to (255,255,255)
-                // _globalLight.color = new Color32()
-            }
+            float rotSpeed = 0.01f;        
 
-            if (afterNoon) {
-            // to red    1      -0.8  -0.65
-            }
-            float intensity = Mathf.Min(0.01f, Mathf.Pow(Mathf.Abs(180 - _globalLight.transform.rotation.eulerAngles.y) * 0.002f, 2)); 
+            float intensity = Mathf.Min(0.01f, Mathf.Pow(Mathf.Abs(180 - _globalLight.transform.rotation.eulerAngles.y) * 0.003f, 2)); 
+            // from above formula we get states y-rotation:
+            // 0 = midday, 180 = midnight, 360 = midday
+            // for that we have custom gradient passed as argument with color-ramp aligned to above order
+            // 0% = midday, 50% = midnight, 100% = midday
+            float state = _globalLight.transform.rotation.eulerAngles.y / 360f;
+            _globalLight.color = _gradient.Evaluate(state);
 
             _globalLight.transform.Rotate(0f, rotSpeed, 0f, Space.World);
             _globalLight.intensity = intensity;
-            Debug.LogError("_globalLight.intensity " + _globalLight.intensity);
-
-
-            // from blue 0.65   -0.8  -0  -> 1 1 1 -> 
         }
         private void expositionSkySet() {
             if(_night) {
