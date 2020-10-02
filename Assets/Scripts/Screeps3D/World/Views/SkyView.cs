@@ -86,6 +86,7 @@ namespace Screeps3D.World.Views
         }
 
         private void rotateGlobalLight() {
+            // tie this value to tick rate somehow
             float rotSpeed = 0.01f;        
 
             float intensity = Mathf.Min(0.01f, Mathf.Pow(Mathf.Abs(180 - _globalLight.transform.rotation.eulerAngles.y) * 0.003f, 2)); 
