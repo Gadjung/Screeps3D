@@ -8,6 +8,7 @@ namespace Screeps3D.World.Views
     public class SkyView : MonoBehaviour
     {
         [SerializeField] public Volume _volume;
+        [SerializeField] public Light _globalLight;
         SkySettings _skySettings;
         bool _sunRise;
         bool _sunSet;
@@ -83,6 +84,30 @@ namespace Screeps3D.World.Views
             }
         }
 
+        private void rotateGlobalLight() {
+            // _globalLight.transform.Rotate(0f, 0.3f, 0f, Space.World);
+            float rotSpeed = 0.05f;
+            // float riseOrFall = _globalLight.transform.rotation.eulerAngles.y < 180 ? 0.1f : -0.1f;
+            bool morning = _globalLight.transform.rotation.eulerAngles.y > 220f;
+            bool afterNoon = _globalLight.transform.rotation.eulerAngles.y < 140f;
+            float step = (360f - 220f) / rotSpeed;
+            if(morning) {
+                // from blue (168,204,255) to (255,255,255)
+                // _globalLight.color = new Color32()
+            }
+
+            if (afterNoon) {
+            // to red    1      -0.8  -0.65
+            }
+            float intensity = Mathf.Min(0.01f, Mathf.Pow(Mathf.Abs(180 - _globalLight.transform.rotation.eulerAngles.y) * 0.002f, 2)); 
+
+            _globalLight.transform.Rotate(0f, rotSpeed, 0f, Space.World);
+            _globalLight.intensity = intensity;
+            Debug.LogError("_globalLight.intensity " + _globalLight.intensity);
+
+
+            // from blue 0.65   -0.8  -0  -> 1 1 1 -> 
+        }
         private void expositionSkySet() {
             if(_night) {
                 _nightLength -= _expositionChange;
@@ -164,13 +189,11 @@ namespace Screeps3D.World.Views
 
         void Update()
         {
+            rotateGlobalLight();
             if ((long)Time.time % 2 != 0) {
                 return;
             }
             rotateSky();
-            // return;
-            luxSkySet();
-
             UpdateFogSettings();
         }
     }
