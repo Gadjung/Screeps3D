@@ -70,6 +70,7 @@ namespace Screeps3D.RoomObjects.Views
         private void Update()
         {
             if (_resource == null){
+                _ps.Stop();
                 return;
             }
 
