@@ -40,6 +40,9 @@ namespace Screeps3D
         public const string TypeInvaderCore = "invaderCore";
         public const string TypeNuke = "nuke";
 
+        public const string Season1_TypeScoreSource = "scoreSource";
+        public const string Season1_TypeScoreCollector = "scoreCollector";
+
 
 
 
