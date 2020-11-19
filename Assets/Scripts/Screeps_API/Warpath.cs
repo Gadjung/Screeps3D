@@ -77,7 +77,7 @@ namespace Screeps_API
                 }
 
 
-                yield return new WaitForSecondsRealtime(60); 
+                yield return new WaitForSecondsRealtime(60);
             }
         }
 
@@ -217,8 +217,18 @@ namespace Screeps_API
                 room.Defender = ScreepsAPI.UserManager.GetUserByName(defender);
                 if (room.Defender == null)
                 {
-                    ScreepsAPI.Http.GetUserByName(defender, json => {
-                        room.Defender = ScreepsAPI.UserManager.CacheUser(new JSONObject(json));
+                    ScreepsAPI.Http.GetUserByName(defender, json =>
+                    {
+                        var response = new JSONObject(json);
+                        var ok = response["ok"];
+                        if (ok != null && ok.n == 1)
+                        {
+                            room.Defender = ScreepsAPI.UserManager.CacheUser(response);
+                        }
+                        //else
+                        //{
+                        //    Debug.LogWarning("Failed getting defender" + json.ToString());
+                        //}
                         //OnClassificationsUpdated?.Invoke();
                     });
                 }
@@ -234,8 +244,18 @@ namespace Screeps_API
                 }
                 else
                 {
-                    ScreepsAPI.Http.GetUserByName(attacker, json => {
-                        room.Attackers.Add(ScreepsAPI.UserManager.CacheUser(new JSONObject(json)));
+                    ScreepsAPI.Http.GetUserByName(attacker, json =>
+                    {
+                        var response = new JSONObject(json);
+                        var ok = response["ok"];
+                        if (ok != null && ok.n == 1)
+                        {
+                            room.Attackers.Add(ScreepsAPI.UserManager.CacheUser(new JSONObject(json)));
+                        }
+                        //else
+                        //{
+                        //    Debug.LogWarning("Failed getting attacker" + json.ToString());
+                        //}
                         //OnClassificationsUpdated?.Invoke();
                     });
                 }
