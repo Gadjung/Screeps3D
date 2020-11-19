@@ -455,10 +455,11 @@ namespace Screeps3D.Rooms
         public void GetAndChooseRoom(string roomName)
         {
             // _roomInput.text
-            var room = RoomManager.Instance.Get(roomName, _shards[_shardInput.value]);
+            var shardName = _shards[_shardInput.value];
+            var room = RoomManager.Instance.Get(roomName, shardName);
             if (room == null)
             {
-                Debug.Log("invalid room");
+                Debug.Log($"invalid room {roomName} {shardName}");
                 return;
             }
 
