@@ -30,7 +30,8 @@ namespace Screeps_API
         {
             if (connected)
             {
-                if (ScreepsAPI.Cache.Type == SourceProviderType.Official)
+                var disableLoan = new List<string> { "/ptr", "/season" };
+                if (ScreepsAPI.Cache.Type == SourceProviderType.Official && !disableLoan.Contains(ScreepsAPI.Cache.Address.Path))
                 {
                     // On official we need to start a timer that pulls data from LOAN e.g. https://www.leagueofautomatednations.com/vk/battles.json
                     // TODO: considering LOAN data is "old", we might want to sprinkle the experimental PVP endpoint ontop of this to get more accurate "pvp timestamps"
