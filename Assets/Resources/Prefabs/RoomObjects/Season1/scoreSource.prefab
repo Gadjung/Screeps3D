@@ -4812,6 +4812,19 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
+--- !u!135 &-5262026321740901874
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2419789911707695903}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!114 &-4624017211241671978
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4852,19 +4865,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89c143c9faac4c8193ea547a8365995a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!135 &-5262026321740901874
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2419789911707695903}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &6554383649172826423
 GameObject:
   m_ObjectHideFlags: 0
@@ -5403,7 +5403,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: bc9bd17ac7892f847a34b42cdc7a266f,
         type: 3}
       propertyPath: m_Name
-      value: altarResource
+      value: scoreSource
       objectReference: {fileID: 0}
     - target: {fileID: 5904142639081076442, guid: bc9bd17ac7892f847a34b42cdc7a266f,
         type: 3}
