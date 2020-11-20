@@ -62,16 +62,27 @@ namespace Screeps3D.Rooms
             _pvpSpectateToggle.onValueChanged.AddListener(OnTogglePvpSpectate);
             _SpectateToggle.onValueChanged.AddListener(OnToggleSpectate);
 
+            StartCoroutine(WaitOnShardNameAndInitializeChooser());
+
+            _roomList.Hide();
+        }
+
+        private IEnumerator WaitOnShardNameAndInitializeChooser()
+        {
             if (ScreepsAPI.IsConnected)
             {
+                while (ScreepsAPI.ShardInfo.Count == 0)
+                {
+                    Debug.Log("Waiting on shardinfo");
+                    yield return new WaitForSeconds(1);
+                }
+
                 ScreepsAPI.Http.GetRooms(ScreepsAPI.Me.UserId, InitializeChooser);
             }
             else
             {
                 throw new Exception("RoomChooser assumes ScreepsAPI.IsConnected == true at start of scene");
             }
-
-            _roomList.Hide();
         }
 
         private void Instance_OnGoToRoom(object sender, GoToRoomEventArgs e)
@@ -171,7 +182,7 @@ namespace Screeps3D.Rooms
             {
                 if (MapStatsUpdater.Instance.RoomInfo.TryGetValue(PlayerPosition.Instance.ShardName, out var shardRoomInfo))
                 {
-                    var ownedRooms = shardRoomInfo.Where(r => r.Value.User != null && r.Value.User.UserId == ScreepsAPI.Me.UserId).Select(r=> r.Value);
+                    var ownedRooms = shardRoomInfo.Where(r => r.Value.User != null && r.Value.User.UserId == ScreepsAPI.Me.UserId).Select(r => r.Value);
 
                     if (ownedRooms.Any())
                     {
@@ -538,7 +549,7 @@ namespace Screeps3D.Rooms
         {
             var obj = new JSONObject(str);
             int? defaultShardIndex = null;
-            string defaultRoom = ""; // TODO: get starter room endpoint if we have no rooms
+            string defaultRoom = ""; // TODO: get starter room endpoint if we have no rooms /api/user/world-start-room
 
             var shardObj = obj["shards"];
             if (shardObj != null)
@@ -574,26 +585,32 @@ namespace Screeps3D.Rooms
             }
             else
             {
-                const string shardName = "shard0";
-
                 _shardInput.gameObject.SetActive(false);
                 _shards.Clear();
-                _shards.Add(shardName);
+                var shardRooms = new List<string>();
+                foreach (var shardName in ScreepsAPI.ShardInfo.ShardInfo.Keys)
+                {
+                    _shards.Add(shardName);
+                }
                 _shardInput.value = 0;
 
-                var shardRooms = new List<string>();
-                _shardRooms.Add(shardName, shardRooms);
-
-                var roomObj = obj["rooms"];
-                if (roomObj != null && roomObj.list.Count > 0)
+                if (shardRooms.Count == 1)
                 {
-                    var roomList = roomObj.list;
-                    defaultRoom = roomList[0].str;
+                    // all rooms are returned if you are not spawned in for some reason
+                    var shardName = shardRooms.First();
+                    _shardRooms.Add(shardName, shardRooms);
 
-                    foreach (var room in roomList)
+                    var roomObj = obj["rooms"];
+                    if (roomObj != null && roomObj.list.Count > 0)
                     {
-                        shardRooms.Add(room.str);
-                        AddRoomToRoomListGameObject(shardName, room.str);
+                        var roomList = roomObj.list;
+                        defaultRoom = roomList[0].str;
+
+                        foreach (var room in roomList)
+                        {
+                            shardRooms.Add(room.str);
+                            AddRoomToRoomListGameObject(shardName, room.str);
+                        }
                     }
                 }
             }
