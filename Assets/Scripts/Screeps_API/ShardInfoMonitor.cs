@@ -118,8 +118,8 @@ namespace Assets.Scripts.Screeps_API
             while (true)
             {
                 shardInfo.Time += 1;
-
-                yield return new WaitForSecondsRealtime((float)shardInfo.AverageTick / 1000);
+                var averageTick = (float)(shardInfo.AverageTick ?? 1);
+                yield return new WaitForSecondsRealtime(averageTick / 1000);
             }
         }
     }
