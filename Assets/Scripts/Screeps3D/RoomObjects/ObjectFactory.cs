@@ -72,8 +72,8 @@ namespace Screeps3D.RoomObjects
                     return new Nuke();
                 
                 // Season 1
-                case Constants.Season1_TypeScoreSource:
-                    return new ScoreSource();
+                case Constants.Season1_TypeScoreContainer:
+                    return new ScoreContainer();
                 case Constants.Season1_TypeScoreCollector:
                     return new ScoreCollector();
                 default:

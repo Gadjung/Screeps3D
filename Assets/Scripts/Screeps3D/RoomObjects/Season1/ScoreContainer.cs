@@ -6,7 +6,7 @@ namespace Screeps3D.RoomObjects
     /*
        {
            "_id":"5ec2b6b1bdd9e5f1ebcb7467",
-           "type":"scoreSource",
+           "type":"scoreContainer",
            "x":6,
            "y":13,
            "room":"E30N54",
@@ -17,12 +17,12 @@ namespace Screeps3D.RoomObjects
        }
     */
 
-    public class ScoreSource : RoomObject, IDecay
+    public class ScoreContainer : StoreStructure, IDecay
     {
         
         public float NextDecayTime { get; set; }
 
-        public ScoreSource()
+        public ScoreContainer()
         {
             OverrideTypePath = "Season1/";
         }
@@ -32,7 +32,7 @@ namespace Screeps3D.RoomObjects
             
             base.Unpack(data, initial);
             UnpackUtility.Decay(this, data);
-            //UnpackUtility.Store(this, data);
+            UnpackUtility.Store(this, data);
         }
     }
 }
