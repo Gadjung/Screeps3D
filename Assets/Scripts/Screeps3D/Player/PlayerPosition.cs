@@ -25,7 +25,7 @@ namespace Screeps3D.Player
 
         private void Update()
         {
-            if (ScreepsAPI.ShardInfo.Count < 0)
+            if (ScreepsAPI.ShardInfo?.Count < 0)
             {
                 // no shard info yet, lets wait
                 return;
